@@ -1,6 +1,16 @@
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
+import mlflow
+import mlflow.tensorflow
+
+
+# Variables pour les paramètres
+EPOCHS = 5
+BATCH_SIZE = 128
+DROPOUT_RATE = 0.2
+
+
 
 # Chargement du jeu de données MNIST
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
@@ -19,6 +29,16 @@ model = keras.Sequential([
     keras.layers.Dropout(0.2),
     keras.layers.Dense(10, activation='softmax')
 ])
+
+
+
+
+with mlflow.start_run():
+    # Enregistrement des paramètres
+    mlflow.log_param("epochs", EPOCHS)
+    mlflow.log_param("batch_size", BATCH_SIZE)
+    mlflow.log_param("dropout_rate", DROPOUT_RATE)
+    
 
 # Compilation du modèle
 model.compile(
@@ -39,6 +59,10 @@ history = model.fit(
 # Évaluation du modèle
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f"Précision sur les données de test : {test_acc:.4f}")
+
+mlflow.log_metric("test_accuracy", test_acc)
+mlflow.log_metric("test_loss", test_loss)
+    
 
 # Sauvegarde du modèle
 model.save("mnist_model.h5")

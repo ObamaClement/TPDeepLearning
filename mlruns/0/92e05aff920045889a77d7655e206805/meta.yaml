@@ -1,0 +1,14 @@
+artifact_uri: mlflow-artifacts:/0/92e05aff920045889a77d7655e206805/artifacts
+end_time: 1758692757412
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 92e05aff920045889a77d7655e206805
+run_name: rogue-ram-680
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758692757343
+status: 3
+tags: []
+user_id: clement

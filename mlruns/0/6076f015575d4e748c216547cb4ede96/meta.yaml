@@ -1,0 +1,14 @@
+artifact_uri: mlflow-artifacts:/0/6076f015575d4e748c216547cb4ede96/artifacts
+end_time: 1758692737982
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6076f015575d4e748c216547cb4ede96
+run_name: aged-shrike-711
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758692737975
+status: 3
+tags: []
+user_id: clement
