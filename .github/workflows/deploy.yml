@@ -1,0 +1,50 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Ou 'master' selon votre branche principale
+
+env:
+  IMAGE_NAME: ${{ vars.GCP_ARTIFACT_REGISTRY }}/${{ vars.GCP_CLOUD_RUN_SERVICE }}:${{ github.sha }}
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    
+    # Ajout des permissions pour s'authentifier sur GCP via OIDC
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool'
+        service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+        
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker ${{ vars.GCP_ARTIFACT_REGISTRY }}
+
+    - name: Build Docker image
+      run: docker build -t $IMAGE_NAME .
+
+    - name: Push Docker image
+      run: docker push $IMAGE_NAME
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${{ vars.GCP_CLOUD_RUN_SERVICE }} \
+          --image $IMAGE_NAME \
+          --region ${{ vars.GCP_CLOUD_RUN_REGION }} \
+          --platform managed \
+          --allow-unauthenticated \
+          --port 5000
