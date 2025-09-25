@@ -8,6 +8,26 @@ app = Flask(__name__)
 # Chargement du modèle Keras
 model = keras.models.load_model('mnist_model.h5')
 
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'healthy',
+        'model_loaded': model is not None,
+        'message': 'MNIST API is running'
+    })
+
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        'message': 'MNIST Classification API',
+        'endpoints': {
+            'health': '/health',
+            'predict': '/predict (POST)'
+        }
+    })
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
